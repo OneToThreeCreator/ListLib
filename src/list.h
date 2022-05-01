@@ -30,8 +30,8 @@ void *llpullnodep (struct list *list, void *prevnode);
 int llmergelist (struct list *dest, struct list *src, size_t dest_offset);
 int llinsertchaini (struct list *list, size_t position, void *first_node);
 int llinsertchainp (struct list *list, void *prevnode, void *first_node);
-#define llprependchain(list, first_node) llinsertchain((list), 0, (first_node))
-#define llappendchain(list, first_node) llinsertchain((list), (list)->size, (first_node))
+#define llprependchain(list, first_node) llinsertchaini((list), 0, (first_node))
+#define llappendchain(list, first_node) llinsertchaini((list), (list)->size, (first_node))
 struct list llsublistp (struct list *list, void *prevnode, size_t quantity);
 struct list llsublisti (struct list *list, size_t position, size_t quantity);
 int llrmsublisti (struct list *list, size_t position, size_t quantity);
