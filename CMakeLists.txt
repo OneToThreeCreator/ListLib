@@ -22,6 +22,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 add_library(list ${ListLib_LIB_TYPE}
    src/list.c
    src/list.h
+   include/listlib.h
 )
 
 set_target_properties(list PROPERTIES 
@@ -69,5 +70,10 @@ if (NOT (ListLib_LIB_TYPE MATCHES STATIC) AND ListLib_INSTALL)
       ${ListLib_BINARY_DIR}/ListLibConfig.cmake
       ${ListLib_BINARY_DIR}/ListLibConfigVersion.cmake
       DESTINATION lib/cmake/ListLib
+   )
+
+   install(FILES
+      ${ListLib_SOURCE_DIR}/include/listlib.h
+      DESTINATION include
    )
 endif()
