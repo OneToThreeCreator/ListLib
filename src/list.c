@@ -68,7 +68,7 @@ void *llgetnode (struct list *list, size_t position)
 
 void *llpullnodep (struct list *list, void *prevnode)
 {
-   void *restrict node, *restrict nextnode;
+   void *node, *nextnode;
    if (prevnode == NULL)
    {
       node = list->chain;
