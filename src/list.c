@@ -72,11 +72,16 @@ void *llpullnodep (struct list *list, void *prevnode)
    if (prevnode == NULL)
    {
       node = list->chain;
+      if (node == NULL)
+         return NULL;
       nextnode = LL_NEXT(node);
+      list->chain = nextnode;
    }
    else
    {
       node = LL_NEXT(prevnode);
+      if (node == NULL)
+         return NULL;
       nextnode = LL_NEXT(node);
       LL_NEXT(prevnode) = nextnode;
    }
@@ -196,9 +201,16 @@ struct list llsublistp (struct list *list, void *prevnode, size_t quantity)
       node = LL_NEXT(prevnode);
    
    void *chain = node;
-   size_t i = 0;
-   while (i < (quantity - 1))
+   if (node == NULL)
+      return (struct list) {NULL, NULL, 0, list->type};
+   size_t i = 1;
+   while (i < quantity)
    {
+      if (LL_NEXT(node) == NULL)
+      {
+         quantity = i;
+         break;
+      }
       node = LL_NEXT(node);
       ++i;
    }
@@ -357,6 +369,11 @@ int llrmsublistp (struct list *list, void *prevnode, size_t quantity)
    void **lastnode;
    while (i < quantity)
    {
+      if (node == NULL)
+      {
+         quantity = i;
+         break;
+      }
       lastnode = node;
       node = LL_NEXT(node);
       llnodefree(lastnode, list->type);
@@ -478,6 +495,11 @@ void* llsubchain (void *prevnode, size_t size, lltype_t type)
    size_t i = 1;
    while (i < size)
    {
+      if (LL_NEXT(node) == NULL)
+      {
+         size = i;
+         break;
+      }
       node = LL_NEXT(node);
       ++i;
    }
@@ -496,7 +518,7 @@ void* llbreakchain (void *lastnode, lltype_t type)
 {
    void *node = LL_NEXT(lastnode);
    LL_NEXT(lastnode) = NULL;
-   if (type == LL_DOUBLELINKED)
+   if (node != NULL && type == LL_DOUBLELINKED)
       LL_PREV(node) = NULL;
    
    return node;
@@ -504,12 +526,18 @@ void* llbreakchain (void *lastnode, lltype_t type)
 
 void llmergechains (void *dest, void *src, lltype_t type)
 {
+   if (dest == NULL || src == NULL)
+      return;
    void **node = dest, **nextnode = LL_NEXT(dest);
    LL_NEXT(node) = src;
+   if (type == LL_DOUBLELINKED)
+      LL_PREV(src) = node;
    while (LL_NEXT(node) != NULL)
       node = LL_NEXT(node);
    
    LL_NEXT(node) = nextnode;
+   if (nextnode != NULL && type == LL_DOUBLELINKED)
+      LL_PREV(nextnode) = node;
 }
 
 void llrmchain (void *chain, lltype_t type)
